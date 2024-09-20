@@ -1,0 +1,12 @@
+CREATE DATABASE example;
+
+CHANGE MASTER TO
+    MASTER_HOST='host.docker.internal',
+    MASTER_USER='slave',
+    MASTER_PASSWORD='password',
+    MASTER_PORT=3306,
+    MASTER_LOG_FILE='master-bin.000002',
+    MASTER_LOG_POS=342,
+    MASTER_CONNECT_RETRY=10;
+
+START SLAVE;

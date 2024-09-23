@@ -1,21 +1,8 @@
 ---
-x-mariadb-config: &common_config
-  image: &common_image mariadb:lts-noble
-  environment: &common_env
-    MYSQL_ROOT_PASSWORD: password
-    TZ: Asia/Seoul
-  extra_hosts: &common_hosts
-    host.docker.internal: host-gateway
-  restart: always
-
-x-mariadb-slave-config: &common_slave_config
-  depends_on: master1
-
 services:
   master1: 
-    <<: *common_config
     container_name: mariadb-master
-    image: *common_image
+    image: mariadb:lts-noble
     ports:
       - 3306:3306
     volumes:
@@ -23,15 +10,15 @@ services:
       - ./master/conf/my.cnf/:/etc/mysql/my.cnf
       - ./master/sql:/docker-entrypoint-initdb.d
     environment: 
-      <<: *common_env
+      MYSQL_ROOT_PASSWORD: password
+      TZ: Asia/Seoul
     extra_hosts: 
-      <<: *common_hosts
+      host.docker.internal: host-gateway
+    restart: always
 
   slave1:
-    <<: *common_config
     container_name: mariadb-slave-1
-    image: *common_image
-    user: 1000:999
+    image: mariadb:lts-noble
     ports:
       - 3307:3306
     volumes: 
@@ -39,15 +26,17 @@ services:
       - ./slaves/conf/1/my.cnf:/etc/mysql/my.cnf
       - ./slaves/sql:/docker-entrypoint-initdb.d
     environment:
-      <<: *common_env
+      MYSQL_ROOT_PASSWORD: password
+      TZ: Asia/Seoul
     extra_hosts:
-      <<: *common_hosts
+      host.docker.internal: host-gateway
+    restart: always
     depends_on:
       - master1
 
   slave2:
     container_name: mariadb-slave-2
-    image: *common_image
+    image: mariadb:lts-noble
     ports:
       - 3308:3306
     volumes:
@@ -55,9 +44,11 @@ services:
       - ./slaves/conf/2/my.cnf:/etc/mysql/my.cnf
       - ./slaves/sql:/docker-entrypoint-initdb.d
     environment:
-      <<: *common_env
+      MYSQL_ROOT_PASSWORD: password
+      TZ: Asia/Seoul
     extra_hosts:
-      <<: *common_hosts
+      host.docker.internal: host-gateway
+    restart: always
     depends_on:
       - master1
 ...
